@@ -13,6 +13,7 @@ def get_parser():
     parser.add_argument("--warmup_steps", default=0, type=int,  help='The number of steps for the warmup phase.')
     parser.add_argument("--classes", default=6, type=int, help='Number of output classes')
     parser.add_argument("--dropout", type=float, default=0.4, help="dropout")
+    parser.add_argument("--seed", type=int, default=42, help="Seed for reproducibility")
 
     parser.add_argument("--pretrained_tokenizer_name", default="bert-base-uncased", type=str, help='Name of the pretrained tokenizer')
     parser.add_argument("--pretrained_model_name", default="bert-base-uncased", type=str, help='Name of the pretrained model')

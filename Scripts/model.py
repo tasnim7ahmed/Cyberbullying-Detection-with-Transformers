@@ -7,10 +7,13 @@ from common import get_parser
 
 parser = get_parser()
 args = parser.parse_args()
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
 
 class BertFGBC(nn.Module):
     def __init__(self):
-        super(BertFGBC, self).__init__()
+        super().__init__()
         self.Bert = BertModel.from_pretrained(args.pretrained_model_name)
         self.Bert_drop = nn.Dropout(args.dropout)
         self.out = nn.Linear(args.bert_hidden, args.classes)

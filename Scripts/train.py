@@ -12,10 +12,12 @@ from dataset import Dataset
 from utils import train_validate_test_split
 from common import get_parser
 
-
 parser = get_parser()
 args = parser.parse_args()
 warnings.filterwarnings("ignore")
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
 
 def run():
     df = pd.read_csv(args.dataset_file).dropna()
@@ -37,11 +39,11 @@ def run():
         shuffle = True
     )
 
-    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #device = torch.device("cpu")
 
     model = BertFGBC()
-    model.to(device)
+    model = model.to(device)
 
     num_train_steps = int(len(train_df) / args.train_batch_size * args.epochs)
     

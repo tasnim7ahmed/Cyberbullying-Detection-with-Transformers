@@ -1,11 +1,15 @@
 import torch
 import pandas as pd
 from transformers import BertTokenizer
+import numpy as np
 
 
 from common import get_parser
 parser = get_parser()
 args = parser.parse_args()
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
 
 class Dataset:
     def __init__(self, text, target):
@@ -36,7 +40,7 @@ class Dataset:
             "input_ids":torch.tensor(input_ids,dtype = torch.long),
             "attention_mask":torch.tensor(attention_mask, dtype = torch.long),
             "token_type_ids":torch.tensor(token_type_ids, dtype = torch.long),
-            "target":torch.tensor(self.target[item], dtype = torch.float)
+            "target":torch.tensor(self.target[item], dtype = torch.long)
         }
 
 if __name__=="__main__":
