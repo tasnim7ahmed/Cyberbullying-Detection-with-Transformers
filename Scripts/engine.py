@@ -76,15 +76,15 @@ def eval_fn(data_loader, model, device):
 
     with torch.no_grad():
         for ii, data in enumerate(data_loader):
-            input_ids = data["input_ids"].to(device, dtype=torch.long)
-            attention_mask = data["attention_mask"].to(device, dtype=torch.long)
-            token_type_ids = data["token_type_ids"].to(device, dtype=torch.long)
-            target = data["target"].to(device, dtype=torch.long)
+            input_ids = data["input_ids"]
+            attention_mask = data["attention_mask"]
+            token_type_ids = data["token_type_ids"]
+            target = data["target"]
             
-            # input_ids = input_ids.to(device, dtype=torch.long)
-            # attention_mask = attention_mask.to(device, dtype=torch.long)
-            # token_type_ids = token_type_ids.to(device, dtype=torch.long)
-            # target = target.to(device, dtype=torch.long)
+            input_ids = input_ids.to(device, dtype=torch.long)
+            attention_mask = attention_mask.to(device, dtype=torch.long)
+            token_type_ids = token_type_ids.to(device, dtype=torch.long)
+            target = target.to(device, dtype=torch.long)
 
             output = model(
                 input_ids=input_ids,
