@@ -8,8 +8,7 @@ from sklearn.metrics import f1_score
 import utils
 
 def loss_fn(output, target):
-    print('Inside Loss!')
-    return nn.BCELoss()(output, target)
+    return nn.CrossEntropyLoss()(output, target)
 
 
 def train_fn(data_loader, model, optimizer, device, scheduler):
@@ -30,16 +29,15 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
         input_ids.to(device, dtype = torch.long)
         attention_mask.to(device, dtype = torch.long)
         token_type_ids = token_type_ids.to(device, dtype=torch.long)
-        target = target.to(device, dtype=torch.float)
+        target = target.to(device, dtype=torch.long)
 
         model.zero_grad()
 
         output = model(input_ids=input_ids, attention_mask = attention_mask, token_type_ids = token_type_ids)
-        print(output, target)
         loss = loss_fn(output, target)
-        print("Outside Loss!")
         train_losses.append(loss.item())
-        output = torch.nn.functional.log_softmax(output, dim = 1)
+        output = torch.log_softmax(output, dim = 1)
+        output = torch.argmax(output, dim = 1)
         output = output.cpu().detach().numpy().tolist()
         target = target.cpu().detach().numpy().tolist()
 
@@ -78,7 +76,7 @@ def eval_fn(data_loader, model, device):
             input_ids = input_ids.to(device, dtype=torch.long)
             attention_mask = attention_mask.to(device, dtype=torch.long)
             token_type_ids = token_type_ids.to(device, dtype=torch.long)
-            target = target.to(device, dtype=torch.float)
+            target = target.to(device, dtype=torch.long)
 
             output = model(
                 input_ids=input_ids,

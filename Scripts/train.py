@@ -1,17 +1,21 @@
 import pandas as pd;
 import numpy as np;
 import torch
-from transformers import BertModel, AdamW, get_linear_schedule_with_warmup
+from transformers import BertModel, AdamW, get_scheduler
 from collections import defaultdict
 from sklearn.metrics import f1_score
+import warnings
 
 import engine
+from model import BertFGBC
 from dataset import Dataset
 from utils import train_validate_test_split
 from common import get_parser
 
+
 parser = get_parser()
 args = parser.parse_args()
+warnings.filterwarnings("ignore")
 
 def run():
     df = pd.read_csv(args.dataset_file).dropna()
@@ -36,7 +40,7 @@ def run():
     #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = torch.device("cpu")
 
-    model = BertModel.from_pretrained(args.pretrained_model_name)
+    model = BertFGBC()
     model.to(device)
 
     num_train_steps = int(len(train_df) / args.train_batch_size * args.epochs)
@@ -48,7 +52,8 @@ def run():
         eps = args.adamw_epsilon
     )
 
-    scheduler = get_linear_schedule_with_warmup(
+    scheduler = get_scheduler(
+        "linear",
         optimizer = optimizer,
         num_warmup_steps = args.warmup_steps,
         num_training_steps = num_train_steps

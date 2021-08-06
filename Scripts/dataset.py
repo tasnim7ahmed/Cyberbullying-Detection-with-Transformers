@@ -41,6 +41,7 @@ class Dataset:
 
 if __name__=="__main__":
     df = pd.read_csv(args.dataset_file).dropna()
+    print(set(df['label'].values))
     dataset = Dataset(text=df.text.values, target=df.target.values)
     print(df.iloc[1]['text'])
     print(dataset[1])

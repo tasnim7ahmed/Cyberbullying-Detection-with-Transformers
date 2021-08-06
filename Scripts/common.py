@@ -11,9 +11,12 @@ def get_parser():
     parser.add_argument("-wd","--weight_decay", default=1e-4, type=float,  help=' Decoupled weight decay to apply')
     parser.add_argument("--adamw_epsilon", default=1e-8, type=float,  help='Adam’s epsilon for numerical stability')
     parser.add_argument("--warmup_steps", default=0, type=int,  help='The number of steps for the warmup phase.')
-    
+    parser.add_argument("--classes", default=6, type=int, help='Number of output classes')
+    parser.add_argument("--dropout", type=float, default=0.4, help="dropout")
+
     parser.add_argument("--pretrained_tokenizer_name", default="bert-base-uncased", type=str, help='Name of the pretrained tokenizer')
     parser.add_argument("--pretrained_model_name", default="bert-base-uncased", type=str, help='Name of the pretrained model')
+    parser.add_argument("--bert_hidden", default=768, type=int, help='Number of layer for Bert')
 
     parser.add_argument("--dataset_file", default="../Dataset/dataset.csv", type=str, help='Path to dataset file')
     parser.add_argument("--model_path", default="../Models/", type=str, help='Save best model')
