@@ -70,18 +70,16 @@ def run():
         print('-'*10)
 
         train_acc, train_loss = engine.train_fn(train_data_loader, model, optimizer, device, scheduler)
-        print(f'Training loss: {train_loss} Training accuracy: {train_acc}')
-        y_pred, val_loss = engine.eval_fn(valid_data_loader, model, device)
-        val_f1 = f1_score(y_pred, valid_df['target'].values, average='weighted')
-        val_f1 = np.round(val_f1.item(), 4)
-        print(f'Validation loss: {val_loss} Validation accuracy: {val_f1}')
+        print(f'Epoch {epoch} --- Training loss: {train_loss} Training accuracy: {train_acc}')
+        val_acc, val_loss = engine.eval_fn(valid_data_loader, model, device)
+        print(f'Epoch {epoch} --- Validation loss: {val_loss} Validation accuracy: {val_acc}')
         history['train_acc'].append(train_acc)
         history['train_loss'].append(train_loss)
-        history['val_acc'].append(val_f1)
+        history['val_acc'].append(val_acc)
         history['val_loss'].append(val_loss)
 
-        if val_f1>best_acc:
-            torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}.bin")
+        if val_acc>best_acc:
+            torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}---val_acc---{val_acc}.bin")
         
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()

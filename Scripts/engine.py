@@ -52,8 +52,8 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
         end = time.time()
         f1 = np.round(train_f1.item(),4)
 
-        if(ii%100 == 0 and ii!=0) or (ii == len(data_loader)-1):
-            print((f'ii={ii}, Train F1={f1},Train loss={loss.item()}, time={end-start}'))
+        # if(ii%100 == 0 and ii!=0) or (ii == len(data_loader)-1):
+        #     print((f'ii={ii}, Train F1={f1},Train loss={loss.item()}, time={end-start}'))
 
         loss.backward() # Calculate gradients based on loss
         nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -97,6 +97,6 @@ def eval_fn(data_loader, model, device):
             val_losses.append(loss.item())
             final_target.extend(target.cpu().detach().numpy().tolist())
             final_output.extend(output.cpu().detach().numpy().tolist())
-
-    return final_output, np.mean(val_losses)
-
+            f1 = f1_score(final_output, final_target, average='weighted')
+            f1 = np.round(f1.item(), 4)
+    return f1, np.mean(val_losses)
