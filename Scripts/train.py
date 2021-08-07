@@ -39,8 +39,15 @@ def run():
         shuffle = True
     )
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    test_dataset = Dataset(text=test_df.text.values, target=test_df.target.values)
+    test_data_loader = torch.utils.data.DataLoader(
+        dataset = test_dataset,
+        batch_size = args.test_batch_size,
+        shuffle = False
+    )
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "cpu"
     model = BertFGBC()
     model = model.to(device)
 
@@ -70,9 +77,9 @@ def run():
         print('-'*10)
 
         train_acc, train_loss = engine.train_fn(train_data_loader, model, optimizer, device, scheduler)
-        print(f'Epoch {epoch} --- Training loss: {train_loss} Training accuracy: {train_acc}')
+        print(f'Epoch {epoch + 1} --- Training loss: {train_loss} Training accuracy: {train_acc}')
         val_acc, val_loss = engine.eval_fn(valid_data_loader, model, device)
-        print(f'Epoch {epoch} --- Validation loss: {val_loss} Validation accuracy: {val_acc}')
+        print(f'Epoch {epoch + 1} --- Validation loss: {val_loss} Validation accuracy: {val_acc}')
         history['train_acc'].append(train_acc)
         history['train_loss'].append(train_loss)
         history['val_acc'].append(val_acc)
@@ -80,7 +87,8 @@ def run():
 
         if val_acc>best_acc:
             torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}---val_acc---{val_acc}.bin")
-        
+
+    engine.test_eval_fn(test_df, test_data_loader, model, device)    
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()
     torch.cuda.synchronize()

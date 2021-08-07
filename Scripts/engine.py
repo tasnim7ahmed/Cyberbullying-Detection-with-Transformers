@@ -63,7 +63,7 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
         progrss_bar.set_postfix(loss = losses.avg)
         final_target.extend(target)
         final_output.extend(output)
-    f1 = f1_score(final_output, final_target, average='weighted')
+    f1 = f1_score(final_target, final_output, average='weighted')
     f1 = np.round(f1.item(), 4)
     return f1, np.mean(train_losses)
 
@@ -97,6 +97,38 @@ def eval_fn(data_loader, model, device):
             val_losses.append(loss.item())
             final_target.extend(target.cpu().detach().numpy().tolist())
             final_output.extend(output.cpu().detach().numpy().tolist())
-            f1 = f1_score(final_output, final_target, average='weighted')
+            f1 = f1_score(final_target, final_output, average='weighted')
             f1 = np.round(f1.item(), 4)
     return f1, np.mean(val_losses)
+
+def test_eval_fn(data_loader, model, device):
+    model.eval()
+    start = time.time()
+    val_losses = []
+    final_target = []
+    final_output = []
+
+    with torch.no_grad():
+        for ii, data in enumerate(data_loader):
+            input_ids = data["input_ids"]
+            attention_mask = data["attention_mask"]
+            token_type_ids = data["token_type_ids"]
+            target = data["target"]
+            
+            input_ids = input_ids.to(device, dtype=torch.long)
+            attention_mask = attention_mask.to(device, dtype=torch.long)
+            token_type_ids = token_type_ids.to(device, dtype=torch.long)
+            target = target.to(device, dtype=torch.long)
+
+            output = model(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                token_type_ids=token_type_ids
+            )
+            loss = loss_fn(output, target)
+            output = torch.log_softmax(output, dim = 1)
+            output = torch.argmax(output, dim = 1)
+            val_losses.append(loss.item())
+            final_target.extend(target.cpu().detach().numpy().tolist())
+            final_output.extend(output.cpu().detach().numpy().tolist())
+    return final_output, final_target

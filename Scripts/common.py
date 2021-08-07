@@ -6,6 +6,7 @@ def get_parser():
     parser.add_argument("--max_length", default=128, type=int,  help='Maximum number of words in a sample')
     parser.add_argument("--train_batch_size", default=16, type=int,  help='Training batch size')
     parser.add_argument("--valid_batch_size", default=32, type=int,  help='Validation batch size')
+    parser.add_argument("--test_batch_size", default=32, type=int,  help='Test batch size')
     parser.add_argument("--epochs", default=1, type=int,  help='Number of training epochs')
     parser.add_argument("-lr","--learning_rate", default=3e-5, type=float,  help='The learning rate to use')
     parser.add_argument("-wd","--weight_decay", default=1e-4, type=float,  help=' Decoupled weight decay to apply')
@@ -21,5 +22,6 @@ def get_parser():
 
     parser.add_argument("--dataset_file", default="../Dataset/dataset.csv", type=str, help='Path to dataset file')
     parser.add_argument("--model_path", default="../Models/", type=str, help='Save best model')
+    parser.add_argument("--output_path", default="../Output/", type=str, help='Get predicted labels for test data')
 
     return parser
