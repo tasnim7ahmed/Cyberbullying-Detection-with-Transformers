@@ -83,10 +83,10 @@ def run():
         if val_f1>best_acc:
             torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}.bin")
         
-        del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
-        torch.cuda.empty_cache()
-        torch.cuda.synchronize()
-        print("##################################### Task End ############################################")
+    del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
+    torch.cuda.empty_cache()
+    torch.cuda.synchronize()
+    print("##################################### Task End ############################################")
 
 if __name__=="__main__":
     run()
