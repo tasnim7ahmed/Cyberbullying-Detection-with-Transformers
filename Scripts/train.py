@@ -47,7 +47,6 @@ def run():
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = "cpu"
     model = BertFGBC()
     model = model.to(device)
 
