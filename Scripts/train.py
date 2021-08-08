@@ -88,6 +88,7 @@ def run():
         if val_acc>best_acc:
             torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}---val_acc---{val_acc}.bin")
 
+    print("##################################### Testing ############################################")
     test_evaluate(test_df, test_data_loader, model, device)    
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()

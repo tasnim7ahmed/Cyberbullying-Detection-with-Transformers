@@ -29,4 +29,4 @@ def test_evaluate(test_df, test_data_loader, model, device):
     print('classification_report:: ', classification_report(y_test, y_pred))
     test_df['y_pred'] = y_pred
     pred_test = test_df[['text', 'label', 'target', 'y_pred']]
-    pred_test.to_csv(f'{args.output_path}test_acc---{acc}', index = False)
+    pred_test.to_csv(f'{args.output_path}test_acc---{acc}.csv', index = False)
