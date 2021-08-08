@@ -20,7 +20,7 @@ def test_evaluate(test_df, test_data_loader, model, device):
     precision = precision_score(y_test, y_pred, average='weighted')
     recall = recall_score(y_test, y_pred, average='weighted')
     f1 = f1_score(y_test, y_pred, average='weighted')
-
+    
     print('Accuracy::', acc)
     print('Mcc Score::', mcc)
     print('Precision::', precision)
@@ -30,3 +30,6 @@ def test_evaluate(test_df, test_data_loader, model, device):
     test_df['y_pred'] = y_pred
     pred_test = test_df[['text', 'label', 'target', 'y_pred']]
     pred_test.to_csv(f'{args.output_path}test_acc---{acc}.csv', index = False)
+
+    conf_mat = confusion_matrix(y_test,y_pred, labels=['Age', 'Ethnicity', 'Gender', 'Notcb', 'Others', 'Religion'])
+    print(conf_mat)

@@ -23,6 +23,7 @@ torch.cuda.manual_seed(args.seed)
 def run():
     df = pd.read_csv(args.dataset_file).dropna()
     train_df, valid_df, test_df = train_validate_test_split(df)
+    print(set(test_df.label.values))
 
     print("train len - {}, valid len - {}, test len - {}".format(len(train_df), len(valid_df),len(test_df)))
 
