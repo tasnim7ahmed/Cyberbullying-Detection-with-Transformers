@@ -97,8 +97,8 @@ def eval_fn(data_loader, model, device):
             val_losses.append(loss.item())
             final_target.extend(target.cpu().detach().numpy().tolist())
             final_output.extend(output.cpu().detach().numpy().tolist())
-            f1 = f1_score(final_target, final_output, average='weighted')
-            f1 = np.round(f1.item(), 4)
+    f1 = f1_score(final_target, final_output, average='weighted')
+    f1 = np.round(f1.item(), 4)
     return f1, np.mean(val_losses)
 
 def test_eval_fn(data_loader, model, device):
@@ -131,4 +131,5 @@ def test_eval_fn(data_loader, model, device):
             val_losses.append(loss.item())
             final_target.extend(target.cpu().detach().numpy().tolist())
             final_output.extend(output.cpu().detach().numpy().tolist())
+    print(f'Output length --- {len(final_output)}, Prediction length --- {len(final_target)}')
     return final_output, final_target
