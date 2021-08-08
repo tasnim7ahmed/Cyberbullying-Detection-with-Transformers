@@ -11,6 +11,7 @@ from model import BertFGBC
 from dataset import Dataset
 from utils import train_validate_test_split
 from common import get_parser
+from evaluate import test_evaluate
 
 parser = get_parser()
 args = parser.parse_args()
@@ -87,7 +88,7 @@ def run():
         if val_acc>best_acc:
             torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}---val_acc---{val_acc}.bin")
 
-    engine.test_eval_fn(test_df, test_data_loader, model, device)    
+    test_evaluate(test_df, test_data_loader, model, device)    
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()
     torch.cuda.synchronize()
