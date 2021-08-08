@@ -45,13 +45,8 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
         train_losses.append(loss.item())
         output = torch.log_softmax(output, dim = 1)
         output = torch.argmax(output, dim = 1)
-        output = output.cpu().detach().numpy().tolist()
-        target = target.cpu().detach().numpy().tolist()
-
-        train_f1 = f1_score(output, target, average = 'macro')
         end = time.time()
-        f1 = np.round(train_f1.item(),4)
-
+        
         # if(ii%100 == 0 and ii!=0) or (ii == len(data_loader)-1):
         #     print((f'ii={ii}, Train F1={f1},Train loss={loss.item()}, time={end-start}'))
 
@@ -61,8 +56,8 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
         scheduler.step() # Update scheduler
         losses.update(loss.item(), input_ids.size(0))
         progrss_bar.set_postfix(loss = losses.avg)
-        final_target.extend(target)
-        final_output.extend(output)
+        final_target.extend(target.cpu().detach().numpy().tolist())
+        final_output.extend(output.cpu().detach().numpy().tolist())
     f1 = f1_score(final_target, final_output, average='weighted')
     f1 = np.round(f1.item(), 4)
     return f1, np.mean(train_losses)

@@ -31,5 +31,5 @@ def test_evaluate(test_df, test_data_loader, model, device):
     pred_test = test_df[['text', 'label', 'target', 'y_pred']]
     pred_test.to_csv(f'{args.output_path}test_acc---{acc}.csv', index = False)
 
-    conf_mat = confusion_matrix(y_test,y_pred, labels=['Age', 'Ethnicity', 'Gender', 'Notcb', 'Others', 'Religion'])
+    conf_mat = confusion_matrix(y_test,y_pred)
     print(conf_mat)
