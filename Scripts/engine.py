@@ -22,31 +22,18 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
     model.train()
     losses = utils.AverageMeter()
     progrss_bar = tqdm(data_loader, total = len(data_loader))
-    start = time.time()
     train_losses = []
     final_target = []
     final_output = []
 
     for ii, data in enumerate(progrss_bar):
-        input_ids = data["input_ids"]
-        attention_mask = data["attention_mask"]
-        token_type_ids = data["token_type_ids"]
-        target = data["target"]
+        output, target, input_ids = generate_output(data, model, device)
 
-        input_ids = input_ids.to(device, dtype = torch.long)
-        attention_mask = attention_mask.to(device, dtype = torch.long)
-        token_type_ids = token_type_ids.to(device, dtype=torch.long)
-        target = target.to(device, dtype=torch.long)
-
-        model.zero_grad()
-
-        output = model(input_ids=input_ids, attention_mask = attention_mask, token_type_ids = token_type_ids)
         loss = loss_fn(output, target)
         train_losses.append(loss.item())
         output = torch.log_softmax(output, dim = 1)
         output = torch.argmax(output, dim = 1)
-        end = time.time()
-        
+       
         # if(ii%100 == 0 and ii!=0) or (ii == len(data_loader)-1):
         #     print((f'ii={ii}, Train F1={f1},Train loss={loss.item()}, time={end-start}'))
 
@@ -64,28 +51,14 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
 
 def eval_fn(data_loader, model, device):
     model.eval()
-    start = time.time()
     val_losses = []
     final_target = []
     final_output = []
 
     with torch.no_grad():
         for ii, data in enumerate(data_loader):
-            input_ids = data["input_ids"]
-            attention_mask = data["attention_mask"]
-            token_type_ids = data["token_type_ids"]
-            target = data["target"]
-            
-            input_ids = input_ids.to(device, dtype=torch.long)
-            attention_mask = attention_mask.to(device, dtype=torch.long)
-            token_type_ids = token_type_ids.to(device, dtype=torch.long)
-            target = target.to(device, dtype=torch.long)
+            output, target, input_ids = generate_output(data, model, device)
 
-            output = model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                token_type_ids=token_type_ids
-            )
             loss = loss_fn(output, target)
             output = torch.log_softmax(output, dim = 1)
             output = torch.argmax(output, dim = 1)
@@ -98,28 +71,14 @@ def eval_fn(data_loader, model, device):
 
 def test_eval_fn(data_loader, model, device):
     model.eval()
-    start = time.time()
     val_losses = []
     final_target = []
     final_output = []
 
     with torch.no_grad():
         for ii, data in enumerate(data_loader):
-            input_ids = data["input_ids"]
-            attention_mask = data["attention_mask"]
-            token_type_ids = data["token_type_ids"]
-            target = data["target"]
-            
-            input_ids = input_ids.to(device, dtype=torch.long)
-            attention_mask = attention_mask.to(device, dtype=torch.long)
-            token_type_ids = token_type_ids.to(device, dtype=torch.long)
-            target = target.to(device, dtype=torch.long)
+            output, target, input_ids = generate_output(data, model, device)
 
-            output = model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                token_type_ids=token_type_ids
-            )
             loss = loss_fn(output, target)
             output = torch.log_softmax(output, dim = 1)
             output = torch.argmax(output, dim = 1)
@@ -128,3 +87,33 @@ def test_eval_fn(data_loader, model, device):
             final_output.extend(output.cpu().detach().numpy().tolist())
     print(f'Output length --- {len(final_output)}, Prediction length --- {len(final_target)}')
     return final_output, final_target
+
+def generate_output(data, model, device):
+    if(args.pretrained_model == "roberta-base"):
+            input_ids = data["input_ids"]
+            attention_mask = data["attention_mask"]
+            target = data["target"]
+
+            input_ids = input_ids.to(device, dtype = torch.long)
+            attention_mask = attention_mask.to(device, dtype = torch.long)
+            target = target.to(device, dtype=torch.long)
+
+            model.zero_grad()
+
+            output = model(input_ids=input_ids, attention_mask = attention_mask)
+    elif(args.pretrained_model == "bert-base-uncased"):
+        input_ids = data["input_ids"]
+        attention_mask = data["attention_mask"]
+        token_type_ids = data["token_type_ids"]
+        target = data["target"]
+
+        input_ids = input_ids.to(device, dtype = torch.long)
+        attention_mask = attention_mask.to(device, dtype = torch.long)
+        token_type_ids = token_type_ids.to(device, dtype=torch.long)
+        target = target.to(device, dtype=torch.long)
+
+        model.zero_grad()
+
+        output = model(input_ids=input_ids, attention_mask = attention_mask, token_type_ids = token_type_ids)
+
+    return output, target, input_ids

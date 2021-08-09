@@ -1,14 +1,13 @@
 import pandas as pd;
 import numpy as np;
 import torch
-from transformers import BertModel, AdamW, get_scheduler
+from transformers import AdamW, get_scheduler
 from collections import defaultdict
-from sklearn.metrics import f1_score
 import warnings
 
 import engine
-from model import BertFGBC
-from dataset import Dataset
+from model import BertFGBC, RobertaFGBC
+from dataset import DatasetBert, DatasetRoberta
 from utils import train_validate_test_split
 from common import get_parser
 from evaluate import test_evaluate
@@ -28,21 +27,21 @@ def run():
 
     print("train len - {}, valid len - {}, test len - {}".format(len(train_df), len(valid_df),len(test_df)))
 
-    train_dataset = Dataset(text=train_df.text.values, target=train_df.target.values)
+    train_dataset = generate_dataset(train_df)
     train_data_loader = torch.utils.data.DataLoader(
         dataset = train_dataset,
         batch_size = args.train_batch_size,
         shuffle = True
     )
 
-    valid_dataset = Dataset(text=valid_df.text.values, target=valid_df.target.values)
+    valid_dataset = generate_dataset(valid_df)
     valid_data_loader = torch.utils.data.DataLoader(
         dataset = valid_dataset,
         batch_size = args.valid_batch_size,
         shuffle = True
     )
 
-    test_dataset = Dataset(text=test_df.text.values, target=test_df.target.values)
+    test_dataset = generate_dataset(test_df)
     test_data_loader = torch.utils.data.DataLoader(
         dataset = test_dataset,
         batch_size = args.test_batch_size,
@@ -50,7 +49,8 @@ def run():
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = BertFGBC()
+    
+    model = set_model()
     model = model.to(device)
 
     num_train_steps = int(len(train_df) / args.train_batch_size * args.epochs)
@@ -88,7 +88,7 @@ def run():
         history['val_loss'].append(val_loss)
 
         if val_acc>best_acc:
-            torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model_name}---val_acc---{val_acc}.bin")
+            torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model}---val_acc---{val_acc}.bin")
 
     print("##################################### Testing ############################################")
     test_evaluate(test_df, test_data_loader, model, device)    
@@ -96,6 +96,18 @@ def run():
     torch.cuda.empty_cache()
     torch.cuda.synchronize()
     print("##################################### Task End ############################################")
+
+def generate_dataset(df):
+    if(args.pretrained_model == "bert-base-uncased"):
+        return DatasetBert(text=df.text.values, target=df.target.values)
+    elif(args.pretrained_model== "roberta-base"):
+        return DatasetRoberta(text=df.text.values, target=df.target.values)
+
+def set_model():
+    if(args.pretrained_model == "bert-base-uncased"):
+        return BertFGBC()
+    elif(args.pretrained_model== "roberta-base"):
+        return RobertaFGBC()
 
 if __name__=="__main__":
     run()
