@@ -6,8 +6,8 @@ from collections import defaultdict
 import warnings
 
 import engine
-from model import BertFGBC, RobertaFGBC, XLNetFGBC
-from dataset import DatasetBert, DatasetRoberta, DatasetXLNet
+from model import BertFGBC, RobertaFGBC, XLNetFGBC, DistilBertFGBC
+from dataset import DatasetBert, DatasetRoberta, DatasetXLNet, DatasetDistilBert
 from utils import train_validate_test_split
 from common import get_parser
 from evaluate import test_evaluate
@@ -93,7 +93,7 @@ def run():
     print(f'\n---History---\n{history}')
     print("##################################### Testing ############################################")
     test_evaluate(test_df, test_data_loader, model, device)  
-      
+
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()
     torch.cuda.synchronize()
@@ -106,6 +106,8 @@ def generate_dataset(df):
         return DatasetRoberta(text=df.text.values, target=df.target.values)
     elif(args.pretrained_model== "xlnet-base-cased"):
         return DatasetXLNet(text=df.text.values, target=df.target.values)
+    elif(args.pretrained_model == "distilbert-base-uncased"):
+        return DatasetDistilBert(text=df.text.values, target=df.target.values)
 
 def set_model():
     if(args.pretrained_model == "bert-base-uncased"):
@@ -114,6 +116,8 @@ def set_model():
         return RobertaFGBC()
     elif(args.pretrained_model == "xlnet-base-cased"):
         return XLNetFGBC()
+    elif(args.pretrained_model == "distilbert-base-uncased"):
+        return DistilBertFGBC()
 
 def set_device():
     device = ""

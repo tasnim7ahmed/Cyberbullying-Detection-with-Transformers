@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from transformers import BertModel, RobertaModel, XLNetModel
+from transformers import BertModel, RobertaModel, XLNetModel, DistilBertModel
 
 from common import get_parser
 
@@ -50,6 +50,32 @@ class RobertaFGBC(nn.Module):
         output = self.out(bo)
 
         return output
+
+class DistilBertFGBC(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.DistilBert = DistilBertModel.from_pretrained(args.pretrained_model)
+        self.DistilBert_drop = nn.Dropout(args.dropout)
+        self.out = nn.Linear(args.distilbert_hidden, args.classes)
+
+    def forward(self, input_ids, attention_mask):
+        last_hidden_state = self.DistilBert(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            return_dict=False
+        )
+
+        mean_last_hidden_state = self.pool_hidden_state(last_hidden_state)
+        
+        bo = self.DistilBert_drop(mean_last_hidden_state)
+        output = self.out(bo)
+
+        return output
+
+    def pool_hidden_state(self, last_hidden_state):
+        last_hidden_state = last_hidden_state[0]
+        mean_last_hidden_state = torch.mean(last_hidden_state, 1)
+        return mean_last_hidden_state
 
 class XLNetFGBC(nn.Module):
     def __init__(self):

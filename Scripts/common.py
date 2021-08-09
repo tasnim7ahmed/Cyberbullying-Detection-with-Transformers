@@ -21,6 +21,7 @@ def get_parser():
     parser.add_argument("--bert_hidden", default=768, type=int, help='Number of layer for Bert')
     parser.add_argument("--roberta_hidden", default=768, type=int, help='Number of layer for Roberta')
     parser.add_argument("--xlnet_hidden", default=768, type=int, help='Number of layer for XLNet')
+    parser.add_argument("--distilbert_hidden", default=768, type=int, help='Number of layer for XLNet')
 
     parser.add_argument("--dataset_file", default="../Dataset/dataset.csv", type=str, help='Path to dataset file')
     parser.add_argument("--model_path", default="../Models/", type=str, help='Save best model')

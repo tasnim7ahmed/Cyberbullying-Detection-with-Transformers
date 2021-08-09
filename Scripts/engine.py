@@ -88,7 +88,7 @@ def test_eval_fn(data_loader, model, device):
     return final_output, final_target
 
 def generate_output(data, model, device):
-    if(args.pretrained_model == "roberta-base"):
+    if(args.pretrained_model == "roberta-base" or args.pretrained_model == "distilbert-base-uncased"):
             input_ids = data["input_ids"]
             attention_mask = data["attention_mask"]
             target = data["target"]
