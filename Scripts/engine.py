@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from tqdm import tqdm
+from tqdm import tqdm_notebook
 import time
 import numpy as np
 from sklearn.metrics import f1_score
@@ -21,7 +21,7 @@ def loss_fn(output, target):
 def train_fn(data_loader, model, optimizer, device, scheduler):
     model.train()
     losses = utils.AverageMeter()
-    progrss_bar = tqdm(data_loader, total = len(data_loader))
+    progrss_bar = tqdm_notebook(data_loader, total = len(data_loader))
     train_losses = []
     final_target = []
     final_output = []
