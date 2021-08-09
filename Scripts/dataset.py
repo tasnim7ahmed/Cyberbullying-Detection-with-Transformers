@@ -1,6 +1,6 @@
 import torch
 import pandas as pd
-from transformers import BertTokenizer, RobertaTokenizer
+from transformers import BertTokenizer, RobertaTokenizer, XLNetTokenizer
 import numpy as np
 
 
@@ -70,6 +70,38 @@ class DatasetRoberta:
         return{
             "input_ids":torch.tensor(input_ids,dtype = torch.long),
             "attention_mask":torch.tensor(attention_mask, dtype = torch.long),
+            "target":torch.tensor(self.target[item], dtype = torch.long)
+        }
+
+class DatasetXLNet:
+    def __init__(self, text, target):
+        self.text = text
+        self.tokenizer = XLNetTokenizer.from_pretrained(args.pretrained_model)
+        self.max_length = args.max_length
+        self.target = target
+
+    def __len__(self):
+        return len(self.text)
+
+    def __getitem__(self, item):
+        text = str(self.text[item])
+        text = "".join(text.split())
+
+        inputs = self.tokenizer.encode_plus(
+            text = text,
+            padding = "max_length",
+            truncation = True,
+            max_length = self.max_length
+        )
+
+        input_ids = inputs["input_ids"]
+        token_type_ids = inputs["token_type_ids"]
+        attention_mask = inputs["attention_mask"]
+
+        return{
+            "input_ids":torch.tensor(input_ids,dtype = torch.long),
+            "attention_mask":torch.tensor(attention_mask, dtype = torch.long),
+            "token_type_ids":torch.tensor(token_type_ids, dtype = torch.long),
             "target":torch.tensor(self.target[item], dtype = torch.long)
         }
 

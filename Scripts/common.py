@@ -15,9 +15,12 @@ def get_parser():
     parser.add_argument("--classes", default=6, type=int, help='Number of output classes')
     parser.add_argument("--dropout", type=float, default=0.4, help="dropout")
     parser.add_argument("--seed", type=int, default=42, help="Seed for reproducibility")
+    parser.add_argument("--device", type=str, default="gpu", help="Training device - cpu/gpu")
 
     parser.add_argument("--pretrained_model", default="bert-base-uncased", type=str, help='Name of the pretrained model')
     parser.add_argument("--bert_hidden", default=768, type=int, help='Number of layer for Bert')
+    parser.add_argument("--roberta_hidden", default=768, type=int, help='Number of layer for Roberta')
+    parser.add_argument("--xlnet_hidden", default=768, type=int, help='Number of layer for XLNet')
 
     parser.add_argument("--dataset_file", default="../Dataset/dataset.csv", type=str, help='Path to dataset file')
     parser.add_argument("--model_path", default="../Models/", type=str, help='Save best model')

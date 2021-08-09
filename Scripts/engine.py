@@ -101,7 +101,7 @@ def generate_output(data, model, device):
             model.zero_grad()
 
             output = model(input_ids=input_ids, attention_mask = attention_mask)
-    elif(args.pretrained_model == "bert-base-uncased"):
+    elif(args.pretrained_model == "bert-base-uncased" or args.pretrained_model == "xlnet-base-cased"):
         input_ids = data["input_ids"]
         attention_mask = data["attention_mask"]
         token_type_ids = data["token_type_ids"]

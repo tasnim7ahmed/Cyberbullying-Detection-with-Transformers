@@ -6,8 +6,8 @@ from collections import defaultdict
 import warnings
 
 import engine
-from model import BertFGBC, RobertaFGBC
-from dataset import DatasetBert, DatasetRoberta
+from model import BertFGBC, RobertaFGBC, XLNetFGBC
+from dataset import DatasetBert, DatasetRoberta, DatasetXLNet
 from utils import train_validate_test_split
 from common import get_parser
 from evaluate import test_evaluate
@@ -47,9 +47,9 @@ def run():
         batch_size = args.test_batch_size,
         shuffle = False
     )
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
+    device = set_device()
+
     model = set_model()
     model = model.to(device)
 
@@ -90,8 +90,10 @@ def run():
         if val_acc>best_acc:
             torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model}---val_acc---{val_acc}.bin")
 
+    print(f'\n---History---\n{history}')
     print("##################################### Testing ############################################")
-    test_evaluate(test_df, test_data_loader, model, device)    
+    test_evaluate(test_df, test_data_loader, model, device)  
+      
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()
     torch.cuda.synchronize()
@@ -102,12 +104,27 @@ def generate_dataset(df):
         return DatasetBert(text=df.text.values, target=df.target.values)
     elif(args.pretrained_model== "roberta-base"):
         return DatasetRoberta(text=df.text.values, target=df.target.values)
+    elif(args.pretrained_model== "xlnet-base-cased"):
+        return DatasetXLNet(text=df.text.values, target=df.target.values)
 
 def set_model():
     if(args.pretrained_model == "bert-base-uncased"):
         return BertFGBC()
-    elif(args.pretrained_model== "roberta-base"):
+    elif(args.pretrained_model == "roberta-base"):
         return RobertaFGBC()
+    elif(args.pretrained_model == "xlnet-base-cased"):
+        return XLNetFGBC()
+
+def set_device():
+    device = ""
+    if(args.device=="cpu"):
+        device = "cpu"
+    else:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if(device=="cpu"):
+            print("GPU not available.")
+    return device
+
 
 if __name__=="__main__":
     run()

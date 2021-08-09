@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from transformers import BertModel, RobertaModel
+from transformers import BertModel, RobertaModel, XLNetModel
 
 from common import get_parser
 
@@ -19,14 +19,15 @@ class BertFGBC(nn.Module):
         self.out = nn.Linear(args.bert_hidden, args.classes)
 
     def forward(self, input_ids, attention_mask, token_type_ids):
-        _,o2 = self.Bert(
+        _,last_hidden_state = self.Bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             return_dict=False
         )
+        print(f'{last_hidden_state.shape}-"Last Hidden State\n"{last_hidden_state}')
 
-        bo = self.Bert_drop(o2)
+        bo = self.Bert_drop(last_hidden_state)
         output = self.out(bo)
 
         return output
@@ -36,16 +37,42 @@ class RobertaFGBC(nn.Module):
         super().__init__()
         self.Roberta = RobertaModel.from_pretrained(args.pretrained_model)
         self.Roberta_drop = nn.Dropout(args.dropout)
-        self.out = nn.Linear(args.bert_hidden, args.classes)
+        self.out = nn.Linear(args.roberta_hidden, args.classes)
 
     def forward(self, input_ids, attention_mask):
-        _,o2 = self.Roberta(
+        _,last_hidden_state = self.Roberta(
             input_ids=input_ids,
             attention_mask=attention_mask,
             return_dict=False
         )
 
-        bo = self.Roberta_drop(o2)
+        bo = self.Roberta_drop(last_hidden_state)
         output = self.out(bo)
 
         return output
+
+class XLNetFGBC(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.XLNet = XLNetModel.from_pretrained(args.pretrained_model)
+        self.XLNet_drop = nn.Dropout(args.dropout)
+        self.out = nn.Linear(args.xlnet_hidden, args.classes)
+
+    def forward(self, input_ids, attention_mask, token_type_ids):
+        last_hidden_state = self.XLNet(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            return_dict=False
+        )
+        mean_last_hidden_state = self.pool_hidden_state(last_hidden_state)
+
+        bo = self.XLNet_drop(mean_last_hidden_state)
+        output = self.out(bo)
+
+        return output
+        
+    def pool_hidden_state(self, last_hidden_state):
+        last_hidden_state = last_hidden_state[0]
+        mean_last_hidden_state = torch.mean(last_hidden_state, 1)
+        return mean_last_hidden_state
