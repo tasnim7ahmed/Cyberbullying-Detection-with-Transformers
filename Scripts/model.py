@@ -25,7 +25,6 @@ class BertFGBC(nn.Module):
             token_type_ids=token_type_ids,
             return_dict=False
         )
-        print(f'{last_hidden_state.shape}-"Last Hidden State\n"{last_hidden_state}')
 
         bo = self.Bert_drop(last_hidden_state)
         output = self.out(bo)
