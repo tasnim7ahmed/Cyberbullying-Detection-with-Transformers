@@ -8,7 +8,6 @@ import warnings
 import engine
 from model import BertFGBC, RobertaFGBC, XLNetFGBC, DistilBertFGBC
 from dataset import DatasetBert, DatasetRoberta, DatasetXLNet, DatasetDistilBert
-from utils import train_validate_test_split
 from common import get_parser
 from evaluate import test_evaluate
 
@@ -20,11 +19,11 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 def run():
-    df = pd.read_csv(args.dataset_file).dropna()
-    print(set(df.label.values))
-    
-    train_df, valid_df, test_df = train_validate_test_split(df)
+    train_df = pd.read_csv(f'{args.dataset_path}train.csv').dropna()
+    valid_df = pd.read_csv(f'{args.dataset_path}valid.csv').dropna()
+    test_df = pd.read_csv(f'{args.dataset_path}test.csv').dropna()
 
+    print(set(train_df.label.values))
     print("train len - {}, valid len - {}, test len - {}".format(len(train_df), len(valid_df),len(test_df)))
 
     train_dataset = generate_dataset(train_df)

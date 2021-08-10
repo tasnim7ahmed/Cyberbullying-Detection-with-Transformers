@@ -21,12 +21,12 @@ def test_evaluate(test_df, test_data_loader, model, device):
     recall = recall_score(y_test, y_pred, average='weighted')
     f1 = f1_score(y_test, y_pred, average='weighted')
     
-    print('Accuracy::', acc)
-    print('Mcc Score::', mcc)
-    print('Precision::', precision)
-    print('Recall::', recall)
-    print('F_score::', f1)
-    print('classification_report:: ', classification_report(y_test, y_pred))
+    print('Accuracy:', acc)
+    print('Mcc Score:', mcc)
+    print('Precision:', precision)
+    print('Recall:', recall)
+    print('F1_score:', f1)
+    print('classification_report: ', classification_report(y_test, y_pred))
     test_df['y_pred'] = y_pred
     pred_test = test_df[['text', 'label', 'target', 'y_pred']]
     pred_test.to_csv(f'{args.output_path}{args.pretrained_model}---test_acc---{acc}.csv', index = False)

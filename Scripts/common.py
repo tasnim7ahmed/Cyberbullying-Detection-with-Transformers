@@ -22,8 +22,9 @@ def get_parser():
     parser.add_argument("--roberta_hidden", default=768, type=int, help='Number of layer for Roberta')
     parser.add_argument("--xlnet_hidden", default=768, type=int, help='Number of layer for XLNet')
     parser.add_argument("--distilbert_hidden", default=768, type=int, help='Number of layer for XLNet')
+    parser.add_argument("--ensemble_type", type=str, default="max-voting", help="Ensemble type - max-voting or averaging")
 
-    parser.add_argument("--dataset_file", default="../Dataset/dataset.csv", type=str, help='Path to dataset file')
+    parser.add_argument("--dataset_path", default="../Dataset/", type=str, help='Path to dataset file')
     parser.add_argument("--model_path", default="../Models/", type=str, help='Save best model')
     parser.add_argument("--output_path", default="../Output/", type=str, help='Get predicted labels for test data')
 
