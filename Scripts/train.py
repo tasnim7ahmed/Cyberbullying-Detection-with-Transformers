@@ -88,7 +88,7 @@ def run():
         history['val_loss'].append(val_loss)
 
         if val_acc>best_acc:
-            torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model}---val_acc---{val_acc}.bin")
+            torch.save(model.state_dict(), f"{args.model_path}{args.pretrained_model}_Best_Val_Acc.bin")
 
     print(f'\n---History---\n{history}')
     print("##################################### Testing ############################################")
