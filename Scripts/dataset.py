@@ -151,6 +151,12 @@ def train_validate_test_split(df, train_percent=0.6, validate_percent=.2, seed=N
 if __name__=="__main__":
     df = pd.read_csv(f'{args.dataset_path}dataset.csv').dropna()
 
+    if args.classes == 5:
+        indexnames = df[ df['label'] == 'Notcb' ].index
+        df = df.drop(indexnames , inplace=False)
+        df = df.reset_index()
+        df.loc[df['target']==5, "target"] = 3
+    print(len(df))
     #Splitting the dataset
     train_df, valid_df, test_df = train_validate_test_split(df)
     train_df.to_csv(f'{args.dataset_path}train.csv')
