@@ -69,7 +69,7 @@ def eval_fn(data_loader, model, device):
     f1 = np.round(f1.item(), 4)
     return f1, np.mean(val_losses)
 
-def test_eval_fn(data_loader, model, device):
+def test_eval_fn(data_loader, model, device, pretrained_model = args.pretrained_model):
     model.eval()
     progress_bar = tqdm(data_loader, total = len(data_loader))
     val_losses = []
@@ -78,7 +78,7 @@ def test_eval_fn(data_loader, model, device):
 
     with torch.no_grad():
         for ii, data in enumerate(progress_bar):
-            output, target, input_ids = generate_output(data, model, device)
+            output, target, input_ids = generate_output(data, model, device, pretrained_model)
 
             loss = loss_fn(output, target)
             output = torch.log_softmax(output, dim = 1)
@@ -89,8 +89,28 @@ def test_eval_fn(data_loader, model, device):
     print(f'Output length --- {len(final_output)}, Prediction length --- {len(final_target)}')
     return final_output, final_target
 
-def generate_output(data, model, device):
-    if(args.pretrained_model == "roberta-base" or args.pretrained_model == "distilbert-base-uncased"):
+def test_eval_fn_ensemble(data_loader, model, device, pretrained_model = args.pretrained_model):
+    model.eval()
+    progress_bar = tqdm(data_loader, total = len(data_loader))
+    val_losses = []
+    final_target = []
+    final_output = []
+
+    with torch.no_grad():
+        for ii, data in enumerate(progress_bar):
+            output, target, input_ids = generate_output(data, model, device, pretrained_model=pretrained_model)
+
+            loss = loss_fn(output, target)
+            output = torch.log_softmax(output, dim = 1)
+            output = torch.argmax(output, dim = 1)
+            val_losses.append(loss.item())
+            final_target.extend(target.cpu().detach().numpy().tolist())
+            final_output.extend(output.cpu().detach().numpy().tolist())
+    print(f'Output length --- {len(final_output)}, Prediction length --- {len(final_target)}')
+    return final_output, final_target
+
+def generate_output(data, model, device, pretrained_model = args.pretrained_model):
+    if(pretrained_model == "roberta-base" or pretrained_model == "distilbert-base-uncased"):
             input_ids = data["input_ids"]
             attention_mask = data["attention_mask"]
             target = data["target"]
@@ -102,7 +122,7 @@ def generate_output(data, model, device):
             model.zero_grad()
 
             output = model(input_ids=input_ids, attention_mask = attention_mask)
-    elif(args.pretrained_model == "bert-base-uncased" or args.pretrained_model == "xlnet-base-cased"):
+    elif(pretrained_model == "bert-base-uncased" or pretrained_model == "xlnet-base-cased"):
         input_ids = data["input_ids"]
         attention_mask = data["attention_mask"]
         token_type_ids = data["token_type_ids"]

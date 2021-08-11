@@ -5,6 +5,7 @@ import numpy as np
 from collections import Counter
 
 from evaluate import test_evaluate
+from engine import test_eval_fn_ensemble
 from utils import sorting_function, evaluate_ensemble, print_stats, load_prediction, set_device, load_models, generate_dataset_for_ensembling
 from common import get_parser
 
@@ -50,30 +51,30 @@ def max_vote():
 
     evaluate_ensemble(max_vote_df)
 
-# def evaluate_all_models():
-#     bert, xlnet, roberta, distilbert = load_models()
-#     test_df = pd.read_csv(f'{args.dataset_path}test.csv').dropna()
-#     device = set_device()
+def averaging():
+    bert, xlnet, roberta, distilbert = load_models()
+    test_df = pd.read_csv(f'{args.dataset_path}test.csv').dropna()
+    device = set_device()
 
-#     bert.to(device)
-#     test_data_loader = generate_dataset_for_ensembling(pretrained_model="bert-base-uncased", df =test_df)
-#     test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="bert-base-uncased")
-#     del bert, test_data_loader
+    bert.to(device)
+    test_data_loader = generate_dataset_for_ensembling(pretrained_model="bert-base-uncased", df =test_df)
+    test_eval_fn_ensemble(test_df, test_data_loader, bert, device, pretrained_model="bert-base-uncased")
+    del bert, test_data_loader
 
-#     xlnet.to(device)
-#     test_data_loader = generate_dataset_for_ensembling(pretrained_model="xlnet-base-cased", df=test_df)
-#     test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="xlnet-base-cased")
-#     del xlnet, test_data_loader
+    # xlnet.to(device)
+    # test_data_loader = generate_dataset_for_ensembling(pretrained_model="xlnet-base-cased", df=test_df)
+    # test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="xlnet-base-cased")
+    # del xlnet, test_data_loader
 
-#     roberta.to(device)
-#     test_data_loader = generate_dataset_for_ensembling(pretrained_model="roberta-base", df=test_df)
-#     test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="roberta-base")
-#     del roberta, test_data_loader
+    # roberta.to(device)
+    # test_data_loader = generate_dataset_for_ensembling(pretrained_model="roberta-base", df=test_df)
+    # test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="roberta-base")
+    # del roberta, test_data_loader
 
-#     distilbert.to(device)
-#     test_data_loader = generate_dataset_for_ensembling(pretrained_model="distilbert-base-uncased", df=test_df)
-#     test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="distilbert-base-uncased")
-#     del distilbert, test_data_loader
+    # distilbert.to(device)
+    # test_data_loader = generate_dataset_for_ensembling(pretrained_model="distilbert-base-uncased", df=test_df)
+    # test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="distilbert-base-uncased")
+    # del distilbert, test_data_loader
 
 
 
@@ -82,5 +83,5 @@ def max_vote():
 
 if __name__=="__main__":
     max_vote()
-    #evaluate_all_models()
+    # averaging()
 

@@ -44,10 +44,10 @@ def sorting_function(val):
     return val[1]    
 
 def load_prediction():
-    bert_path = (f'{args.output_path}bert-base-uncased---test_acc---0.8153233413688292.csv')
-    xlnet_path = (f'{args.output_path}xlnet-base-cased---test_acc---0.8411068022219893.csv')
-    roberta_path = (f'{args.output_path}roberta-base---test_acc---0.8470810187611362.csv')
-    distilbert_path = (f'{args.output_path}distilbert-base-uncased---test_acc---0.820039828110261.csv')
+    bert_path = (f'{args.output_path}bert-base-uncased---test_acc---0.8095587464626349.csv')
+    xlnet_path = (f'{args.output_path}xlnet-base-cased---test_acc---0.8432030185515145.csv')
+    roberta_path = (f'{args.output_path}roberta-base---test_acc---0.8505397757048527.csv')
+    distilbert_path = (f'{args.output_path}distilbert-base-uncased---test_acc---0.8079865842154911.csv')
 
     bert = pd.read_csv(bert_path)
     xlnet = pd.read_csv(xlnet_path)
@@ -78,7 +78,7 @@ def evaluate_ensemble(max_vote_df):
     print('Precision:', precision)
     print('Recall:', recall)
     print('F1_score:', f1)
-    print('classification_report:: ', classification_report(y_test, y_pred))
+    print('classification_report: ', classification_report(y_test, y_pred))
     
     max_vote_df.to_csv(f'{args.output_path}Ensemble-{args.ensemble_type}---test_acc---{acc}.csv', index = False)
 

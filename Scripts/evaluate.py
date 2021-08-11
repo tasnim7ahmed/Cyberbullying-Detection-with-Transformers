@@ -16,7 +16,7 @@ torch.cuda.manual_seed(args.seed)
 
 def test_evaluate(test_df, test_data_loader, model, device, pretrained_model = args.pretrained_model):
     print(f'\nEvaluating: ---{pretrained_model}---\n')
-    y_pred, y_test = test_eval_fn(test_data_loader, model, device)
+    y_pred, y_test = test_eval_fn(test_data_loader, model, device, pretrained_model)
     acc = accuracy_score(y_test, y_pred)
     mcc = matthews_corrcoef(y_test, y_pred)
     precision = precision_score(y_test, y_pred, average='weighted')
