@@ -87,13 +87,13 @@ def evaluate_ensemble(max_vote_df):
 
 def generate_dataset_for_ensembling(pretrained_model, df):
     if(pretrained_model == "bert-base-uncased"):
-        dataset = DatasetBert(text=df.text.values, target=df.target.values)
+        dataset = DatasetBert(text=df.text.values, target=df.target.values, pretrained_model="bert-base-uncased")
     elif(pretrained_model== "roberta-base"):
-        dataset = DatasetRoberta(text=df.text.values, target=df.target.values)
+        dataset = DatasetRoberta(text=df.text.values, target=df.target.values, pretrained_model="roberta-base")
     elif(pretrained_model== "xlnet-base-cased"):
-        dataset = DatasetXLNet(text=df.text.values, target=df.target.values)
+        dataset = DatasetXLNet(text=df.text.values, target=df.target.values, pretrained_model="xlnet-base-cased")
     elif(pretrained_model == "distilbert-base-uncased"):
-        dataset = DatasetDistilBert(text=df.text.values, target=df.target.values)
+        dataset = DatasetDistilBert(text=df.text.values, target=df.target.values, pretrained_model="distilbert-base-uncased")
 
     data_loader = torch.utils.data.DataLoader(
         dataset = dataset,

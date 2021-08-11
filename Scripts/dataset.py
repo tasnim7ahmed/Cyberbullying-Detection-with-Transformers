@@ -13,9 +13,9 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 class DatasetBert:
-    def __init__(self, text, target):
+    def __init__(self, text, target, pretrained_model = args.pretrained_model):
         self.text = text
-        self.tokenizer = BertTokenizer.from_pretrained(args.pretrained_model)
+        self.tokenizer = BertTokenizer.from_pretrained(pretrained_model)
         self.max_length = args.max_length
         self.target = target
 
@@ -45,9 +45,9 @@ class DatasetBert:
         }
 
 class DatasetRoberta:
-    def __init__(self, text, target):
+    def __init__(self, text, target, pretrained_model = args.pretrained_model):
         self.text = text
-        self.tokenizer = RobertaTokenizer.from_pretrained(args.pretrained_model)
+        self.tokenizer = RobertaTokenizer.from_pretrained(pretrained_model)
         self.max_length = args.max_length
         self.target = target
 
@@ -75,9 +75,9 @@ class DatasetRoberta:
         }
 
 class DatasetDistilBert:
-    def __init__(self, text, target):
+    def __init__(self, text, target, pretrained_model = args.pretrained_model):
         self.text = text
-        self.tokenizer = DistilBertTokenizer.from_pretrained(args.pretrained_model)
+        self.tokenizer = DistilBertTokenizer.from_pretrained(pretrained_model)
         self.max_length = args.max_length
         self.target = target
 
@@ -105,9 +105,9 @@ class DatasetDistilBert:
         }
 
 class DatasetXLNet:
-    def __init__(self, text, target):
+    def __init__(self, text, target, pretrained_model = args.pretrained_model):
         self.text = text
-        self.tokenizer = XLNetTokenizer.from_pretrained(args.pretrained_model)
+        self.tokenizer = XLNetTokenizer.from_pretrained(pretrained_model)
         self.max_length = args.max_length
         self.target = target
 
