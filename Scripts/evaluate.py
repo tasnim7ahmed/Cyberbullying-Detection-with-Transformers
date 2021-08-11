@@ -48,17 +48,17 @@ def evaluate_all_models():
 
     xlnet.to(device)
     test_data_loader = generate_dataset_for_ensembling(pretrained_model="xlnet-base-cased", df=test_df)
-    test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="xlnet-base-cased")
+    test_evaluate(test_df, test_data_loader, xlnet, device, pretrained_model="xlnet-base-cased")
     del xlnet, test_data_loader
 
     roberta.to(device)
     test_data_loader = generate_dataset_for_ensembling(pretrained_model="roberta-base", df=test_df)
-    test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="roberta-base")
+    test_evaluate(test_df, test_data_loader, roberta, device, pretrained_model="roberta-base")
     del roberta, test_data_loader
 
     distilbert.to(device)
     test_data_loader = generate_dataset_for_ensembling(pretrained_model="distilbert-base-uncased", df=test_df)
-    test_evaluate(test_df, test_data_loader, bert, device, pretrained_model="distilbert-base-uncased")
+    test_evaluate(test_df, test_data_loader, distilbert, device, pretrained_model="distilbert-base-uncased")
     del distilbert, test_data_loader
 
 if __name__ == "__main__":

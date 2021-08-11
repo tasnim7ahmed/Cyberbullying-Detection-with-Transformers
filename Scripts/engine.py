@@ -102,11 +102,10 @@ def test_eval_fn_ensemble(data_loader, model, device, pretrained_model = args.pr
 
             loss = loss_fn(output, target)
             output = torch.log_softmax(output, dim = 1)
-            output = torch.argmax(output, dim = 1)
+            output = torch.exp(output)
             val_losses.append(loss.item())
             final_target.extend(target.cpu().detach().numpy().tolist())
             final_output.extend(output.cpu().detach().numpy().tolist())
-    print(f'Output length --- {len(final_output)}, Prediction length --- {len(final_target)}')
     return final_output, final_target
 
 def generate_output(data, model, device, pretrained_model = args.pretrained_model):
