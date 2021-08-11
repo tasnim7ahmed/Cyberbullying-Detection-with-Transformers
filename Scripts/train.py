@@ -11,6 +11,7 @@ from dataset import DatasetBert, DatasetRoberta, DatasetXLNet, DatasetDistilBert
 from common import get_parser
 from evaluate import test_evaluate
 from utils import set_device
+from visualize import save_acc_curves, save_loss_curves
 
 parser = get_parser()
 args = parser.parse_args()
@@ -82,7 +83,7 @@ def run():
     scheduler = get_scheduler(
         "linear",
         optimizer = optimizer,
-        num_warmup_steps = args.warmup_steps,
+        num_warmup_steps = num_train_steps*0.2,
         num_training_steps = num_train_steps
     )
 
@@ -109,8 +110,11 @@ def run():
 
     print(f'\n---History---\n{history}')
     print("##################################### Testing ############################################")
-    test_evaluate(test_df, test_data_loader, model, device)  
+    test_evaluate(test_df, test_data_loader, model, device)
 
+    save_acc_curves(history)
+    save_loss_curves(history)
+    
     del model, train_data_loader, valid_data_loader, train_dataset, valid_dataset
     torch.cuda.empty_cache()
     torch.cuda.synchronize()

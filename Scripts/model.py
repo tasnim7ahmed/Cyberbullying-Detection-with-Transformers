@@ -15,8 +15,11 @@ class BertFGBC(nn.Module):
     def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
         self.Bert = BertModel.from_pretrained(pretrained_model)
-        self.Bert_drop = nn.Dropout(args.dropout)
-        self.out = nn.Linear(args.bert_hidden, args.classes)
+        self.drop1 = nn.Dropout(args.dropout)
+        self.linear = nn.Linear(args.bert_hidden, 64)
+        self.batch_norm = nn.LayerNorm(64)
+        self.drop2 = nn.Dropout(args.dropout)
+        self.out = nn.Linear(64, args.classes)
 
     def forward(self, input_ids, attention_mask, token_type_ids):
         _,last_hidden_state = self.Bert(
@@ -26,7 +29,12 @@ class BertFGBC(nn.Module):
             return_dict=False
         )
 
-        bo = self.Bert_drop(last_hidden_state)
+        bo = self.drop1(last_hidden_state)
+        bo = self.linear(bo)
+        bo = self.batch_norm(bo)
+        bo = nn.Tanh()(bo)
+        bo = self.drop2(bo)
+
         output = self.out(bo)
 
         return output
@@ -35,8 +43,11 @@ class RobertaFGBC(nn.Module):
     def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
         self.Roberta = RobertaModel.from_pretrained(pretrained_model)
-        self.Roberta_drop = nn.Dropout(args.dropout)
-        self.out = nn.Linear(args.roberta_hidden, args.classes)
+        self.drop1 = nn.Dropout(args.dropout)
+        self.linear = nn.Linear(args.roberta_hidden, 64)
+        self.batch_norm = nn.LayerNorm(64)
+        self.drop2 = nn.Dropout(args.dropout)
+        self.out = nn.Linear(64, args.classes)
 
     def forward(self, input_ids, attention_mask):
         _,last_hidden_state = self.Roberta(
@@ -45,7 +56,12 @@ class RobertaFGBC(nn.Module):
             return_dict=False
         )
 
-        bo = self.Roberta_drop(last_hidden_state)
+        bo = self.drop1(last_hidden_state)
+        bo = self.linear(bo)
+        bo = self.batch_norm(bo)
+        bo = nn.Tanh()(bo)
+        bo = self.drop2(bo)
+
         output = self.out(bo)
 
         return output
@@ -54,8 +70,11 @@ class DistilBertFGBC(nn.Module):
     def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
         self.DistilBert = DistilBertModel.from_pretrained(pretrained_model)
-        self.DistilBert_drop = nn.Dropout(args.dropout)
-        self.out = nn.Linear(args.distilbert_hidden, args.classes)
+        self.drop1 = nn.Dropout(args.dropout)
+        self.linear = nn.Linear(args.distilbert_hidden, 64)
+        self.batch_norm = nn.LayerNorm(64)
+        self.drop2 = nn.Dropout(args.dropout)
+        self.out = nn.Linear(64, args.classes)
 
     def forward(self, input_ids, attention_mask):
         last_hidden_state = self.DistilBert(
@@ -66,7 +85,12 @@ class DistilBertFGBC(nn.Module):
 
         mean_last_hidden_state = self.pool_hidden_state(last_hidden_state)
         
-        bo = self.DistilBert_drop(mean_last_hidden_state)
+        bo = self.drop1(mean_last_hidden_state)
+        bo = self.linear(bo)
+        bo = self.batch_norm(bo)
+        bo = nn.Tanh()(bo)
+        bo = self.drop2(bo)
+
         output = self.out(bo)
 
         return output
@@ -80,8 +104,11 @@ class XLNetFGBC(nn.Module):
     def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
         self.XLNet = XLNetModel.from_pretrained(pretrained_model)
-        self.XLNet_drop = nn.Dropout(args.dropout)
-        self.out = nn.Linear(args.xlnet_hidden, args.classes)
+        self.drop1 = nn.Dropout(args.dropout)
+        self.linear = nn.Linear(args.xlnet_hidden, 64)
+        self.batch_norm = nn.LayerNorm(64)
+        self.drop2 = nn.Dropout(args.dropout)
+        self.out = nn.Linear(64, args.classes)
 
     def forward(self, input_ids, attention_mask, token_type_ids):
         last_hidden_state = self.XLNet(
@@ -92,7 +119,12 @@ class XLNetFGBC(nn.Module):
         )
         mean_last_hidden_state = self.pool_hidden_state(last_hidden_state)
 
-        bo = self.XLNet_drop(mean_last_hidden_state)
+        bo = self.drop1(mean_last_hidden_state)
+        bo = self.linear(bo)
+        bo = self.batch_norm(bo)
+        bo = nn.Tanh()(bo)
+        bo = self.drop2(bo)
+
         output = self.out(bo)
 
         return output

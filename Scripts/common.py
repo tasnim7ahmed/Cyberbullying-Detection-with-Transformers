@@ -27,5 +27,6 @@ def get_parser():
     parser.add_argument("--dataset_path", default="../Dataset/", type=str, help='Path to dataset file')
     parser.add_argument("--model_path", default="../Models/", type=str, help='Save best model')
     parser.add_argument("--output_path", default="../Output/", type=str, help='Get predicted labels for test data')
+    parser.add_argument("--figure_path", default="../Figures/", type=str, help='Directory for accuracy and loss plots')
 
     return parser
