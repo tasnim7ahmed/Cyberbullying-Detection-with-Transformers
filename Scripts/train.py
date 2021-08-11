@@ -54,9 +54,26 @@ def run():
     model = model.to(device)
 
     num_train_steps = int(len(train_df) / args.train_batch_size * args.epochs)
+
+    param_optimizer = list(model.named_parameters())
+    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+    optimizer_parameters = [
+        {
+            "params": [
+                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+            ],
+            "weight_decay": 0.01,
+        },
+        {
+            "params": [
+                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+            ],
+            "weight_decay": 0.0,
+        },
+    ]
     
     optimizer = AdamW(
-        params = model.parameters(),
+        params = optimizer_parameters,
         lr = args.learning_rate,
         weight_decay = args.weight_decay,
         eps = args.adamw_epsilon
