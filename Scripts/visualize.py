@@ -1,8 +1,7 @@
-from Scripts.common import get_parser
 import matplotlib.pyplot as plt
 
-
 from common import get_parser
+
 parser = get_parser()
 args = parser.parse_args()
 
