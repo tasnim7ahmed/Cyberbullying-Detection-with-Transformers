@@ -12,9 +12,9 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 class BertFGBC(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
-        self.Bert = BertModel.from_pretrained(args.pretrained_model)
+        self.Bert = BertModel.from_pretrained(pretrained_model)
         self.Bert_drop = nn.Dropout(args.dropout)
         self.out = nn.Linear(args.bert_hidden, args.classes)
 
@@ -32,9 +32,9 @@ class BertFGBC(nn.Module):
         return output
 
 class RobertaFGBC(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
-        self.Roberta = RobertaModel.from_pretrained(args.pretrained_model)
+        self.Roberta = RobertaModel.from_pretrained(pretrained_model)
         self.Roberta_drop = nn.Dropout(args.dropout)
         self.out = nn.Linear(args.roberta_hidden, args.classes)
 
@@ -51,9 +51,9 @@ class RobertaFGBC(nn.Module):
         return output
 
 class DistilBertFGBC(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
-        self.DistilBert = DistilBertModel.from_pretrained(args.pretrained_model)
+        self.DistilBert = DistilBertModel.from_pretrained(pretrained_model)
         self.DistilBert_drop = nn.Dropout(args.dropout)
         self.out = nn.Linear(args.distilbert_hidden, args.classes)
 
@@ -77,9 +77,9 @@ class DistilBertFGBC(nn.Module):
         return mean_last_hidden_state
 
 class XLNetFGBC(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained_model = args.pretrained_model):
         super().__init__()
-        self.XLNet = XLNetModel.from_pretrained(args.pretrained_model)
+        self.XLNet = XLNetModel.from_pretrained(pretrained_model)
         self.XLNet_drop = nn.Dropout(args.dropout)
         self.out = nn.Linear(args.xlnet_hidden, args.classes)
 

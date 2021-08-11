@@ -10,6 +10,7 @@ from model import BertFGBC, RobertaFGBC, XLNetFGBC, DistilBertFGBC
 from dataset import DatasetBert, DatasetRoberta, DatasetXLNet, DatasetDistilBert
 from common import get_parser
 from evaluate import test_evaluate
+from utils import set_device
 
 parser = get_parser()
 args = parser.parse_args()
@@ -117,16 +118,6 @@ def set_model():
         return XLNetFGBC()
     elif(args.pretrained_model == "distilbert-base-uncased"):
         return DistilBertFGBC()
-
-def set_device():
-    device = ""
-    if(args.device=="cpu"):
-        device = "cpu"
-    else:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if(device=="cpu"):
-            print("GPU not available.")
-    return device
 
 
 if __name__=="__main__":

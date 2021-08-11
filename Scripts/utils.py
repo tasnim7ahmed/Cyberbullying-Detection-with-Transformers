@@ -2,7 +2,10 @@ import torch
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix, classification_report, matthews_corrcoef, f1_score, accuracy_score, precision_score, recall_score
+
 from common import get_parser
+from model import BertFGBC, RobertaFGBC, XLNetFGBC, DistilBertFGBC
+from dataset import DatasetBert, DatasetRoberta, DatasetXLNet, DatasetDistilBert
 
 parser = get_parser()
 args = parser.parse_args()
@@ -27,16 +30,15 @@ class AverageMeter:
         self.count += n
         self.avg = self.sum / self.count
 
-def train_validate_test_split(df, train_percent=0.6, validate_percent=.2, seed=None):
-    np.random.seed(seed)
-    perm = np.random.permutation(df.index)
-    m = len(df.index)
-    train_end = int(train_percent * m)
-    validate_end = int(validate_percent * m) + train_end
-    train = df.iloc[perm[:train_end]]
-    validate = df.iloc[perm[train_end:validate_end]]
-    test = df.iloc[perm[validate_end:]]
-    return train, validate, test
+def set_device():
+    device = ""
+    if(args.device=="cpu"):
+        device = "cpu"
+    else:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if(device=="cpu"):
+            print("GPU not available.")
+    return device
 
 def sorting_function(val):
     return val[1]    
@@ -82,3 +84,39 @@ def evaluate_ensemble(max_vote_df):
 
     conf_mat = confusion_matrix(y_test,y_pred)
     print(conf_mat)
+
+def generate_dataset_for_ensembling(pretrained_model, df):
+    if(pretrained_model == "bert-base-uncased"):
+        dataset = DatasetBert(text=df.text.values, target=df.target.values)
+    elif(pretrained_model== "roberta-base"):
+        dataset = DatasetRoberta(text=df.text.values, target=df.target.values)
+    elif(pretrained_model== "xlnet-base-cased"):
+        dataset = DatasetXLNet(text=df.text.values, target=df.target.values)
+    elif(pretrained_model == "distilbert-base-uncased"):
+        dataset = DatasetDistilBert(text=df.text.values, target=df.target.values)
+
+    data_loader = torch.utils.data.DataLoader(
+        dataset = dataset,
+        batch_size = args.test_batch_size,
+        shuffle = False
+    )
+
+    return data_loader
+
+def load_models():
+    bert_path = (f'{args.model_path}bert-base-uncased_Best_Val_Acc.bin')
+    xlnet_path = (f'{args.model_path}xlnet-base-cased_Best_Val_Acc.bin')
+    roberta_path = (f'{args.model_path}roberta-base_Best_Val_Acc.bin')
+    distilbert_path = (f'{args.model_path}distilbert-base-uncased_Best_Val_Acc.bin')
+
+    bert = BertFGBC(pretrained_model="bert-base-uncased")
+    xlnet = XLNetFGBC(pretrained_model="xlnet-base-cased")
+    roberta = RobertaFGBC(pretrained_model="roberta-base")
+    distilbert = DistilBertFGBC(pretrained_model="distilbert-base-uncased")
+
+    bert.load_state_dict(torch.load(bert_path))
+    xlnet.load_state_dict(torch.load(xlnet_path))
+    roberta.load_state_dict(torch.load(roberta_path))
+    distilbert.load_state_dict(torch.load(distilbert_path))
+
+    return bert, xlnet, roberta, distilbert

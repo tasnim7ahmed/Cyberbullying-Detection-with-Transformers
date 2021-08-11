@@ -20,12 +20,12 @@ def loss_fn(output, target):
 def train_fn(data_loader, model, optimizer, device, scheduler):
     model.train()
     losses = utils.AverageMeter()
-    progrss_bar = tqdm(data_loader, total = len(data_loader))
+    progress_bar = tqdm(data_loader, total = len(data_loader))
     train_losses = []
     final_target = []
     final_output = []
 
-    for ii, data in enumerate(progrss_bar):
+    for ii, data in enumerate(progress_bar):
         output, target, input_ids = generate_output(data, model, device)
 
         loss = loss_fn(output, target)
@@ -41,7 +41,7 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
         optimizer.step() # Adjust weights based on calculated gradients
         scheduler.step() # Update scheduler
         losses.update(loss.item(), input_ids.size(0))
-        progrss_bar.set_postfix(loss = losses.avg)
+        progress_bar.set_postfix(loss = losses.avg)
         final_target.extend(target.cpu().detach().numpy().tolist())
         final_output.extend(output.cpu().detach().numpy().tolist())
     f1 = f1_score(final_target, final_output, average='weighted')
@@ -50,12 +50,13 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
 
 def eval_fn(data_loader, model, device):
     model.eval()
+    progress_bar = tqdm(data_loader, total = len(data_loader))
     val_losses = []
     final_target = []
     final_output = []
 
     with torch.no_grad():
-        for ii, data in enumerate(data_loader):
+        for ii, data in enumerate(progress_bar):
             output, target, input_ids = generate_output(data, model, device)
 
             loss = loss_fn(output, target)
@@ -70,12 +71,13 @@ def eval_fn(data_loader, model, device):
 
 def test_eval_fn(data_loader, model, device):
     model.eval()
+    progress_bar = tqdm(data_loader, total = len(data_loader))
     val_losses = []
     final_target = []
     final_output = []
 
     with torch.no_grad():
-        for ii, data in enumerate(data_loader):
+        for ii, data in enumerate(progress_bar):
             output, target, input_ids = generate_output(data, model, device)
 
             loss = loss_fn(output, target)
