@@ -100,7 +100,7 @@ def averaging():
     print('Precision:', precision)
     print('Recall:', recall)
     print('F1_score:', f1)
-    print('classification_report: ', classification_report(y_test, y_pred))
+    print('classification_report: ', classification_report(y_test, y_pred, digits=4))
     
 
 

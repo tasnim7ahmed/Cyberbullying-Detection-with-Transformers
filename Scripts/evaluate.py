@@ -28,7 +28,7 @@ def test_evaluate(test_df, test_data_loader, model, device, pretrained_model = a
     print('Precision:', precision)
     print('Recall:', recall)
     print('F1_score:', f1)
-    print('classification_report: ', classification_report(y_test, y_pred))
+    print('classification_report: ', classification_report(y_test, y_pred, digits=4))
     test_df['y_pred'] = y_pred
     pred_test = test_df[['text', 'label', 'target', 'y_pred']]
     pred_test.to_csv(f'{args.output_path}{pretrained_model}---test_acc---{acc}.csv', index = False)
