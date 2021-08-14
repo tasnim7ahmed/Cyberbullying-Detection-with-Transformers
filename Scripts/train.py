@@ -12,6 +12,7 @@ from common import get_parser
 from evaluate import test_evaluate
 from utils import set_device
 from visualize import save_acc_curves, save_loss_curves
+from dataset import train_validate_test_split
 
 parser = get_parser()
 args = parser.parse_args()
@@ -21,6 +22,8 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 def run():
+    create_dataset_files()
+
     train_df = pd.read_csv(f'{args.dataset_path}train.csv').dropna()
     valid_df = pd.read_csv(f'{args.dataset_path}valid.csv').dropna()
     test_df = pd.read_csv(f'{args.dataset_path}test.csv').dropna()
@@ -119,6 +122,26 @@ def run():
     torch.cuda.empty_cache()
     torch.cuda.synchronize()
     print("##################################### Task End ############################################")
+
+def create_dataset_files():
+    if args.dataset == "FGBC":
+        df = pd.read_csv(f'{args.dataset_path}dataset.csv').dropna()
+
+        if args.classes == 5:
+            indexnames = df[ df['label'] == 'Notcb' ].index
+            df = df.drop(indexnames , inplace=False)
+            df = df.reset_index()
+            df.loc[df['target']==5, "target"] = 3
+        print(len(df))
+    elif args.dataset == "Twitter":
+        df = pd.read_csv(f'{args.dataset_path}twitter_dataset.csv').dropna()
+
+    #Splitting the dataset
+    train_df, valid_df, test_df = train_validate_test_split(df)
+    train_df.to_csv(f'{args.dataset_path}train.csv')
+    valid_df.to_csv(f'{args.dataset_path}valid.csv')
+    test_df.to_csv(f'{args.dataset_path}test.csv')
+
 
 def generate_dataset(df):
     if(args.pretrained_model == "bert-base-uncased"):
