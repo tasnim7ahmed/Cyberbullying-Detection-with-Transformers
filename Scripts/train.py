@@ -22,7 +22,8 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 
 def run():
-    create_dataset_files()
+    if args.split == "yes":
+        create_dataset_files()
 
     train_df = pd.read_csv(f'{args.dataset_path}train.csv').dropna()
     valid_df = pd.read_csv(f'{args.dataset_path}valid.csv').dropna()
