@@ -28,15 +28,19 @@ class BertFGBC(nn.Module):
             token_type_ids=token_type_ids,
             return_dict=False
         )
-
+        #print(f'Last Hidden State - {last_hidden_state.shape}')
         bo = self.drop1(last_hidden_state)
+        #print(f'Dropout1 - {bo.shape}')
         bo = self.linear(bo)
+        #print(f'Linear1 - {bo.shape}')
         bo = self.batch_norm(bo)
+        #print(f'BatchNorm - {bo.shape}')
         bo = nn.Tanh()(bo)
         bo = self.drop2(bo)
+        #print(f'Dropout2 - {bo.shape}')
 
         output = self.out(bo)
-
+        #print(f'Output - {output.shape}')
         return output
 
 class RobertaFGBC(nn.Module):

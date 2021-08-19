@@ -167,5 +167,3 @@ if __name__=="__main__":
     dataset = DatasetBert(text=df.text.values, target=df.target.values)
     print(df.iloc[1]['text'])
     print(dataset[1])
-
-    

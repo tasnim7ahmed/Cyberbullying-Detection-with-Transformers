@@ -57,6 +57,7 @@ def run():
 
     model = set_model()
     model = model.to(device)
+    # summary(model, (), 16)
 
     num_train_steps = int(len(train_df) / args.train_batch_size * args.epochs)
 
