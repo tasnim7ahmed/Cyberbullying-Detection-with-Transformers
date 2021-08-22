@@ -56,6 +56,7 @@ def run():
     device = set_device()
 
     model = set_model()
+    print(count_model_parameters(model))
     model = model.to(device)
     # summary(model, (), 16)
 
@@ -164,6 +165,9 @@ def set_model():
         return XLNetFGBC()
     elif(args.pretrained_model == "distilbert-base-uncased"):
         return DistilBertFGBC()
+
+def count_model_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 if __name__=="__main__":
