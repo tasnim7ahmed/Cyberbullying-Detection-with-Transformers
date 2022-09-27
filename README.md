@@ -16,7 +16,7 @@
 ### Training and Evaluation
 - Go to the `Scripts` directory:
 ```bash
-python train.py
+cd Scripts
 ```
 
 - Train stand-alone model (BERT-base-uncased) with GPU support:
