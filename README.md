@@ -13,12 +13,29 @@
 
   please run the command `pip install -r requirements.txt`.
 
-### CUT and FastCUT Training and Test
-
-- Train indivisual model with GPU support:
+### Training and Evaluation
+- Go to the `Scripts` directory:
 ```bash
 python train.py
 ```
+
+- Train stand-alone model (BERT-base-uncased) with GPU support:
+```bash
+python train.py
+```
+- Train stand-alone model (BERT-base-uncased) with CPU only:
+```bash
+python train.py --device CPU
+```
+- Train stand-alone model with Twitter-parsed dataset:
+```bash
+python train.py --dataset Twitter
+```
+Information regarding other training parameters can be found at `Scripts/common.py` file.
+
+Fine-tuned models will be saved at `../Models/` folder.
+Evaluation output files will be saved at `../Output/` folder.
+Figures will be saved at `../Figures/` folder.
 
 
 ### Citation
