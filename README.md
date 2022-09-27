@@ -33,8 +33,8 @@ python train.py --dataset Twitter
 ```
 Information regarding other training parameters can be found at `Scripts/common.py` file.
 
-Fine-tuned models will be saved at `../Models/` folder.
-Evaluation output files will be saved at `../Output/` folder.
+Fine-tuned models will be saved at `../Models/` folder.\
+Evaluation output files will be saved at `../Output/` folder.\
 Figures will be saved at `../Figures/` folder.
 
 
