@@ -24,7 +24,7 @@ class DatasetBert:
 
     def __getitem__(self, item):
         text = str(self.text[item])
-        text = "".join(text.split())
+        text = " ".join(text.split())
 
         inputs = self.tokenizer.encode_plus(
             text = text,
@@ -56,7 +56,7 @@ class DatasetRoberta:
 
     def __getitem__(self, item):
         text = str(self.text[item])
-        text = "".join(text.split())
+        text = " ".join(text.split())
 
         inputs = self.tokenizer.encode_plus(
             text = text,
@@ -86,7 +86,7 @@ class DatasetDistilBert:
 
     def __getitem__(self, item):
         text = str(self.text[item])
-        text = "".join(text.split())
+        text = " ".join(text.split())
 
         inputs = self.tokenizer.encode_plus(
             text = text,
@@ -116,7 +116,7 @@ class DatasetXLNet:
 
     def __getitem__(self, item):
         text = str(self.text[item])
-        text = "".join(text.split())
+        text = " ".join(text.split())
 
         inputs = self.tokenizer.encode_plus(
             text = text,
